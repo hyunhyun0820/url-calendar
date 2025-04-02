@@ -10,7 +10,7 @@ load_dotenv()
 PASSWORD = os.getenv("SECRET_PASSWORD")
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # 로그인 상태 변수
 logged_in = False
@@ -82,7 +82,7 @@ def delete_box(data):
         conn.commit()
     emit('remove_box', {"id": data["id"]}, broadcast=True)
 
-# 박스 내용 업데이트 이벤트=
+# 박스 내용 업데이트 이벤트
 @socketio.on('update_box')
 def update_box(data):
     global logged_in
