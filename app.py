@@ -121,13 +121,6 @@ def move_box(data):
         db.session.commit()
         emit('move_box', data, broadcast=True)
 
-# DB 다운로드 라우트 (PostgreSQL에서는 지원 X)
-@app.route('/download-db')
-def download_db():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    return "PostgreSQL에서는 DB 파일 다운로드가 지원되지 않습니다."
-
 # 앱 실행
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
