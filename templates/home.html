@@ -8,13 +8,15 @@
 </head>
 
 <body>
+    <div id="top-bar">
+        <button onclick="createBox()" id="create-btn">메모 필드 생성</button>
+    </div>
 
-    <button onclick="createBox()" id="create-btn">메모 필드 생성</button>
+    <div id="container-wrapper">
+        <div id="container"></div>
+    </div>
 
-    <div id="container"></div>
-    
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
 </html>
