@@ -25,13 +25,13 @@ body {
     width: 300px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
-    user-select: none; /* 이 박스 안에서도 텍스트 선택을 막음 */
+    user-select: none;
 }
 
 .password-box h2 {
     font-size: 22px;
     margin-bottom: 20px;
-    user-select: none; /* 제목에서 텍스트 선택을 막음 */
+    user-select: none;
 }
 
 .password-box input {
@@ -42,7 +42,7 @@ body {
     border: 2px solid #e86d83;
     border-radius: 8px;
     outline: none;
-    user-select: none; /* 입력창에서 텍스트 선택을 막음 */
+    user-select: none;
 }
 
 .password-box input:focus {
@@ -60,7 +60,7 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    user-select: none; /* 버튼에서 텍스트 선택을 막음 */
+    user-select: none;
 }
 
 .submit-btn:hover {
@@ -75,5 +75,5 @@ body {
 #error-message {
     font-size: 14px;
     margin-top: 10px;
-    user-select: none; /* 오류 메시지에서 텍스트 선택을 막음 */
+    user-select: none;
 }

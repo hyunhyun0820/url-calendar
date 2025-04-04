@@ -9,16 +9,14 @@ import gevent.monkey
 # Gevent 패치 적용 (WebSocket 안정화)
 gevent.monkey.patch_all()
 
-# .env 파일 로드
 load_dotenv()
 
-# 환경 변수에서 비밀번호 불러오기
 PASSWORD = os.getenv("SECRET_PASSWORD")
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")  # 세션 보안 키
+app.secret_key = os.getenv("SECRET_KEY", "default_secret_key")  # 세션 보안 
 
-# ✅ WebSocket 안정성을 위해 gevent 사용
+# WebSocket 안정성을 위해 gevent 사용
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 
 # 데이터베이스 초기화
@@ -35,7 +33,7 @@ def init_db():
 
 init_db()  # 서버 시작 시 DB 테이블 생성
 
-# 로그인 페이지
+# 비번 입력
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -47,7 +45,7 @@ def login():
             return render_template('login.html', error="비밀번호가 틀렸습니다.")
     return render_template('login.html')
 
-# 홈 페이지
+# 홈
 @app.route('/home')
 def home():
     if not session.get('logged_in'):
