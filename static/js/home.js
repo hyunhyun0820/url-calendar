@@ -33,13 +33,14 @@ function addBox(data) {
     textarea.classList.add("editable");
     deleteBtn.classList.add("delete-btn");
 
-    box.dataset.id = data.id;  // 박스에 ID 속성 추가
+    box.dataset.id = data.id;
     box.style.top = `${data.top}px`;
     box.style.left = `${data.left}px`;
     textarea.value = data.text;
     deleteBtn.innerText = "✖";
 
     let isDragging = false, offsetX, offsetY;
+    let isTyping = false;
 
     const startDrag = (e) => {
         if (e.target !== textarea && e.target !== deleteBtn) {
@@ -63,7 +64,11 @@ function addBox(data) {
 
     const stopDrag = () => {
         if (isDragging) {
-            socket.emit("move_box", { id: data.id, top: box.offsetTop, left: box.offsetLeft });
+            socket.emit("move_box", {
+                id: data.id,
+                top: box.offsetTop,
+                left: box.offsetLeft
+            });
             isDragging = false;
             box.style.cursor = "grab";
         }
@@ -74,14 +79,20 @@ function addBox(data) {
         box.remove();
     });
 
-    // 디바운싱 적용 (텍스트 입력 문제 해결)
+    // 디바운싱 + 입력 중인 상태 표시
     textarea.addEventListener("input", () => {
+        isTyping = true;
         clearTimeout(textarea.debounceTimer);
         textarea.debounceTimer = setTimeout(() => {
-            socket.emit("update_box", { id: data.id, text: textarea.value });
-        }, 300);
+            socket.emit("update_box", {
+                id: data.id,
+                text: textarea.value
+            });
+            isTyping = false;
+        }, 600); // ← 모바일 대응 위해 여유있게
     });
 
+    // 마우스 기반 드래그
     box.addEventListener("mousedown", startDrag);
     document.addEventListener("mousemove", dragBox);
     document.addEventListener("mouseup", stopDrag);
@@ -89,21 +100,20 @@ function addBox(data) {
     box.appendChild(textarea);
     box.appendChild(deleteBtn);
     container.appendChild(box);
+
+    // 서버에서 내용 업데이트 (입력 중이 아니면 반영)
+    socket.on("update_box", (serverData) => {
+        if (serverData.id !== data.id) return; // 다른 박스면 무시
+        if (!isTyping && textarea) {
+            textarea.value = serverData.text;
+        }
+    });
 }
 
 // 박스 삭제 반영
 socket.on("remove_box", (data) => {
     let box = document.querySelector(`.box[data-id="${data.id}"]`);
     if (box) box.remove();
-});
-
-// 박스 내용 업데이트 반영
-socket.on("update_box", (data) => {
-    let box = document.querySelector(`.box[data-id="${data.id}"]`);
-    if (box) {
-        let textarea = box.querySelector("textarea");
-        if (textarea) textarea.value = data.text;
-    }
 });
 
 // 박스 이동 반영
