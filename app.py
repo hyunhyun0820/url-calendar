@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_file  # ← send_file 추가
 import os
 import sqlite3
 from dotenv import load_dotenv
@@ -33,7 +33,7 @@ def init_db():
 
 init_db()  # 서버 시작 시 DB 테이블 생성
 
-# 비번 입력
+# 로그인
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -52,68 +52,13 @@ def home():
         return redirect(url_for('login'))
     return render_template('home.html')
 
-# 클라이언트 접속 시 DB에서 박스 불러오기
-@socketio.on('connect')
-def send_initial_data():
+# DB 다운로드 라우트 추가
+@app.route('/download-db')
+def download_db():
     if not session.get('logged_in'):
-        return  # 로그인 안 된 경우 데이터 전송 안 함
-    
-    with sqlite3.connect("database.db", check_same_thread=False) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM boxes")
-        boxes = [{"id": row[0], "top": row[1], "left": row[2], "text": row[3]} for row in cursor.fetchall()]
-    
-    emit('load_boxes', boxes)
+        return redirect(url_for('login'))
+    return send_file("database.db", as_attachment=True)
 
-# 박스 생성
-@socketio.on('create_box')
-def create_box(data):
-    with sqlite3.connect("database.db", check_same_thread=False) as conn:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO boxes (id, top, left, text) VALUES (?, ?, ?, ?)", 
-                       (data["id"], data["top"], data["left"], data["text"]))
-        conn.commit()
-    emit('new_box', data, broadcast=True)
-
-# 박스 삭제
-@socketio.on('delete_box')
-def delete_box(data):
-    if not session.get('logged_in'):
-        return
-    
-    with sqlite3.connect("database.db", check_same_thread=False) as conn:
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM boxes WHERE id = ?", (data["id"],))
-        conn.commit()
-    
-    emit('remove_box', {"id": data["id"]}, broadcast=True)
-
-# 박스 내용 업데이트
-@socketio.on('update_box')
-def update_box(data):
-    if not session.get('logged_in'):
-        return
-    
-    with sqlite3.connect("database.db", check_same_thread=False) as conn:
-        cursor = conn.cursor()
-        cursor.execute("UPDATE boxes SET text = ? WHERE id = ?", (data["text"], data["id"]))
-        conn.commit()
-    
-    emit('update_box', data, broadcast=True)
-
-# 박스 이동
-@socketio.on('move_box')
-def move_box(data):
-    if not session.get('logged_in'):
-        return
-    
-    with sqlite3.connect("database.db", check_same_thread=False) as conn:
-        cursor = conn.cursor()
-        cursor.execute("UPDATE boxes SET top = ?, left = ? WHERE id = ?", (data["top"], data["left"], data["id"]))
-        conn.commit()
-    
-    emit('move_box', data, broadcast=True)
-
-# Render에서 실행할 때 사용
+# 서버 실행
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)
