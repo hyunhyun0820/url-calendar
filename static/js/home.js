@@ -1,5 +1,5 @@
-let container = document.getElementById("container");
-let socket = io();
+const container = document.getElementById("container");
+const socket = io();
 
 // 기존 박스 불러오기
 socket.on("load_boxes", (boxes) => {
@@ -8,19 +8,18 @@ socket.on("load_boxes", (boxes) => {
 
 // 중앙에 박스 생성
 function createBox() {
-    let id = Date.now().toString();
-    let boxWidth = 150;
-    let boxHeight = 150;
+    const id = Date.now().toString();
+    const boxWidth = 150;
+    const boxHeight = 150;
 
     const centerX = window.scrollX + window.innerWidth / 2;
     const centerY = window.scrollY + window.innerHeight / 2;
 
     const containerRect = container.getBoundingClientRect();
-
     const left = centerX - containerRect.left - boxWidth / 2;
     const top = centerY - containerRect.top - boxHeight / 2;
 
-    let boxData = {
+    const boxData = {
         id,
         top,
         left,
@@ -30,24 +29,24 @@ function createBox() {
     socket.emit("create_box", boxData);
 }
 
-// 새 박스 추가
+// 새 박스 서버에서 수신
 socket.on("new_box", (data) => {
     addBox(data);
 });
 
 function addBox(data) {
-    let box = document.createElement("div");
-    let textarea = document.createElement("textarea");
-    let deleteBtn = document.createElement("button");
-
+    const box = document.createElement("div");
     box.classList.add("box");
-    textarea.classList.add("editable");
-    deleteBtn.classList.add("delete-btn");
-
     box.dataset.id = data.id;
     box.style.top = `${data.top}px`;
     box.style.left = `${data.left}px`;
+
+    const textarea = document.createElement("textarea");
+    textarea.classList.add("editable");
     textarea.value = data.text;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("delete-btn");
     deleteBtn.innerText = "✖";
 
     let isDragging = false;
@@ -56,24 +55,20 @@ function addBox(data) {
 
     // 드래그 시작
     const startDrag = (e) => {
-        const target = e.target;
+        if (textarea.contains(e.target) || deleteBtn.contains(e.target)) return;
 
-        if (box.contains(target) && !textarea.contains(target) && !deleteBtn.contains(target)) {
-            isDragging = true;
+        isDragging = true;
+        const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+        const clientY = e.clientY ?? e.touches?.[0]?.clientY;
 
-            const clientX = e.clientX ?? e.touches?.[0]?.clientX;
-            const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+        offsetX = clientX - box.offsetLeft;
+        offsetY = clientY - box.offsetTop;
 
-            // offset 기준으로 정확하게 계산
-            offsetX = clientX - box.offsetLeft;
-            offsetY = clientY - box.offsetTop;
+        box.style.cursor = "grabbing";
 
-            box.style.cursor = "grabbing";
-
-            if (e.type === "touchstart") {
-                e.preventDefault();
-                document.body.style.touchAction = "none";
-            }
+        if (e.type === "touchstart") {
+            e.preventDefault();
+            document.body.style.touchAction = "none";
         }
     };
 
@@ -109,13 +104,7 @@ function addBox(data) {
         }
     };
 
-    // 삭제
-    deleteBtn.addEventListener("click", () => {
-        socket.emit("delete_box", { id: data.id });
-        box.remove();
-    });
-
-    // 텍스트 입력 동기화
+    // 텍스트 동기화
     textarea.addEventListener("input", () => {
         isTyping = true;
         clearTimeout(textarea.debounceTimer);
@@ -128,11 +117,24 @@ function addBox(data) {
         }, 500);
     });
 
-    // 이벤트 등록
+    // 삭제
+    deleteBtn.addEventListener("click", () => {
+        socket.emit("delete_box", { id: data.id });
+        box.remove();
+    });
+
+    // 서버에서 받은 텍스트 갱신
+    socket.on("update_box", (serverData) => {
+        if (serverData.id !== data.id) return;
+        if (!isTyping) {
+            textarea.value = serverData.text;
+        }
+    });
+
+    // 이벤트 연결
     box.addEventListener("mousedown", startDrag);
     document.addEventListener("mousemove", dragBox);
     document.addEventListener("mouseup", stopDrag);
-
     box.addEventListener("touchstart", startDrag, { passive: false });
     document.addEventListener("touchmove", dragBox, { passive: false });
     document.addEventListener("touchend", stopDrag);
@@ -140,27 +142,21 @@ function addBox(data) {
     box.appendChild(textarea);
     box.appendChild(deleteBtn);
     container.appendChild(box);
-
-    // 텍스트 동기화 수신
-    socket.on("update_box", (serverData) => {
-        if (serverData.id !== data.id) return;
-        if (!isTyping) {
-            textarea.value = serverData.text;
-        }
-    });
 }
 
-// 박스 제거
-socket.on("remove_box", (data) => {
-    let box = document.querySelector(`.box[data-id="${data.id}"]`);
-    if (box) box.remove();
-});
-
-// 위치 동기화
+// 박스 위치 이동
 socket.on("move_box", (data) => {
-    let box = document.querySelector(`.box[data-id="${data.id}"]`);
+    const box = document.querySelector(`.box[data-id="${data.id}"]`);
     if (box) {
         box.style.top = `${data.top}px`;
         box.style.left = `${data.left}px`;
+    }
+});
+
+// 박스 제거
+socket.on("remove_box", (data) => {
+    const box = document.querySelector(`.box[data-id="${data.id}"]`);
+    if (box) {
+        box.remove();
     }
 });
