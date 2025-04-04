@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: CoNote
-    runtime: python
-    buildCommand: |
-      pip install -r requirements.txt
-      flask db upgrade
-    startCommand: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 app:app
