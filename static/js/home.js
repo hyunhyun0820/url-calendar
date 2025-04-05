@@ -123,7 +123,7 @@ function addBox(data) {
         box.remove();
     });
 
-    // 서버에서 받은 텍스트 갱신
+    // 서버에서 받은 텍스트 갱신하기
     socket.on("update_box", (serverData) => {
         if (serverData.id !== data.id) return;
         if (!isTyping) {
@@ -131,7 +131,7 @@ function addBox(data) {
         }
     });
 
-    // 이벤트 연결
+    // 이벤트들 연결
     box.addEventListener("mousedown", startDrag);
     document.addEventListener("mousemove", dragBox);
     document.addEventListener("mouseup", stopDrag);
