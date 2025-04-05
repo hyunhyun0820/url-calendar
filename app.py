@@ -56,10 +56,10 @@ def home():
 
 # 소켓 이벤트 - 클라이언트 연결 시 박스들 전송
 @socketio.on('connect')
-def send_initial_data():
+def send_initial_data(auth=None):
     if not session.get('logged_in'):
         return
-    boxes = Box.query.all()
+    boxes = Box.query.order_by(Box.id.asc()).all()
     emit('load_boxes', [
         {"id": box.id, "top": box.top, "left": box.left, "text": box.text}
         for box in boxes
