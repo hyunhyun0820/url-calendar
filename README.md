@@ -1,6 +1,7 @@
 # 📦 Conote - 실시간 협업 메모 웹
 
 Conote는 **Socket 기반의 실시간 협업 메모 웹**입니다.
+Collaborative + Note를 대충 섞어서 만든 이름인데,
 브라우저에서 메모 박스를 만들고, 이동하고, 삭제하고, 내용을 작성할 수 있습니다.
 
 > ⚙️ Flask + Flask-SocketIO + PostgreSQL 기반으로 만들어졌으며, 모바일 환경에서도 사용 가능합니다.
