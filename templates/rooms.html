@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>방 선택</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/rooms.css') }}">
+</head>
+<body>
+  <h1>방 선택</h1>
+
+  <form method="POST" action="{{ url_for('create_room') }}">
+    <h2>방 만들기</h2>
+    <input type="text" name="room_name" placeholder="방 이름" required>
+    <input type="password" name="room_password" placeholder="비밀번호" required>
+    <button type="submit">방 만들기</button>
+  </form>
+
+  <form method="POST" action="{{ url_for('join_room') }}">
+    <h2>기존 방 입장</h2>
+    <input type="text" name="room_name" placeholder="방 이름" required>
+    <input type="password" name="room_password" placeholder="비밀번호" required>
+    <button type="submit">입장</button>
+  </form>
+</body>
+</html>

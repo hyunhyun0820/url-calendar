@@ -1,0 +1,75 @@
+/* static/css/rooms.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  user-select: none;
+}
+
+form {
+  background-color: white;
+  border: 2px solid #e86d83;
+  border-radius: 15px;
+  padding: 30px;
+  width: 320px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+form h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 80%;
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border: 2px solid #e86d83;
+  border-radius: 8px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #ff6f61;
+}
+
+button {
+  width: 80%;
+  padding: 12px;
+  background: linear-gradient(135deg, #ff6f61, #d16ba5);
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #d16ba5, #ff6f61);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 40px;
+}
