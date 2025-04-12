@@ -2,24 +2,40 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>방 선택</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/rooms.css') }}">
 </head>
 <body>
-  <h1>방 선택</h1>
+  <h1>Note</h1>
 
   <form method="POST" action="{{ url_for('create_room') }}">
     <h2>방 만들기</h2>
     <input type="text" name="room_name" placeholder="방 이름" required>
-    <input type="password" name="room_password" placeholder="비밀번호" required>
+    <input type="password" name="room_password" placeholder="비밀번호" required autocomplete="off">
+    {% if error and error_type == 'create' %}
+      <p class="error-message">{{ error }}</p>
+    {% endif %}
     <button type="submit">방 만들기</button>
   </form>
 
-  <form method="POST" action="{{ url_for('join_room') }}">
+  <form method="POST" action="{{ url_for('join_existing_room') }}">
     <h2>기존 방 입장</h2>
     <input type="text" name="room_name" placeholder="방 이름" required>
-    <input type="password" name="room_password" placeholder="비밀번호" required>
+    <input type="password" name="room_password" placeholder="비밀번호" required autocomplete="off">
+    {% if error and error_type == 'join' %}
+      <p class="error-message">{{ error }}</p>
+    {% endif %}
     <button type="submit">입장</button>
   </form>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        const errors = document.querySelectorAll(".error-message");
+        errors.forEach((el) => el.remove());
+      }, 3000);
+    });
+  </script>
 </body>
 </html>

@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Conote - {{ room_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 
-<body>
+<body data-room-id="{{ room_id }}">
     <div id="top-bar">
-        <button onclick="createBox()" id="create-btn">메모 필드 생성</button>
+        <div id="room-info">
+            현재 방: <strong>{{ room_name }}</strong>
+        </div>
+        <div id="top-buttons">
+            <button onclick="createBox()" id="create-btn">메모 필드 생성</button>
+            <button onclick="leaveRoom()" id="leave-btn">방 나가기</button>
+        </div>
     </div>
+    
 
     <div id="container-wrapper">
         <div id="container"></div>
@@ -18,5 +25,10 @@
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script>
+        function leaveRoom() {
+            window.location.href = "/";  // 방 나가기 후 이동할 주소
+        }
+    </script>
 </body>
 </html>

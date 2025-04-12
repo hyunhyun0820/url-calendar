@@ -1,5 +1,3 @@
-/* static/css/rooms.css */
-
 body {
   font-family: Arial, sans-serif;
   background-color: #f7f7f7;
@@ -18,7 +16,7 @@ form {
   border: 2px solid #e86d83;
   border-radius: 15px;
   padding: 30px;
-  width: 320px;
+  width: 320px; /* Locking the width at 320px */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
   margin-bottom: 30px;
@@ -72,4 +70,48 @@ h1 {
   font-size: 28px;
   color: #333;
   margin-bottom: 40px;
+}
+
+.error-message {
+  color: red;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ff6f61;
+}
+
+@media (max-width: 320px) {
+  h1 {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+
+  form {
+    width: 90%;
+    padding: 20px;
+  }
+
+  form h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .error-message {
+    font-size: 13px;
+    padding: 6px;
+  }
 }
