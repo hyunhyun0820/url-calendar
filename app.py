@@ -40,6 +40,7 @@ class Box(db.Model):
     left = db.Column(db.Integer)
     text = db.Column(db.Text)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
+    color = db.Column(db.String(20))  # 새 필드 추가
 
 # 라우트
 @app.route('/')
