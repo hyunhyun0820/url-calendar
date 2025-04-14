@@ -42,15 +42,17 @@ class Box(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
     color = db.Column(db.String(20))  # 새 필드 추가
 
-# 라우트
+# 링크로 접속하면 링크/rooms로
 @app.route('/')
 def index():
     return redirect(url_for('rooms_page'))
 
+# /rooms에 rooms.html 띄우기
 @app.route("/rooms", methods=["GET"])
 def rooms_page():
     return render_template("rooms.html")
 
+# 방 접속시 보이는 home
 @app.route('/home')
 def home():
     if 'room_id' not in session:
@@ -62,6 +64,7 @@ def home():
 
     return render_template('home.html', room_id=room.id, room_name=room.name)
 
+# 방 만들기
 @app.route("/create_room", methods=["POST"])
 def create_room():
     room_name = request.form["room_name"]
@@ -76,6 +79,7 @@ def create_room():
     session["room_id"] = new_room.id
     return redirect(url_for("home"))
 
+# 방 입장하기
 @app.route("/join_room", methods=["POST"])
 def join_existing_room():
     room_name = request.form["room_name"]
@@ -100,6 +104,7 @@ def handle_connect(auth=None):
         for box in boxes
     ], to=request.sid)
 
+# 소켓 박스 만들기
 @socketio.on("create_box")
 def create_box(data):
     room_id = session.get("room_id")
@@ -123,6 +128,7 @@ def create_box(data):
         "text": text
     }, to=room_id_str)
 
+# 소켓 박스 삭제하기
 @socketio.on('delete_box')
 def delete_box(data):
     room_id = session.get("room_id")
@@ -136,6 +142,7 @@ def delete_box(data):
         db.session.commit()
         emit('remove_box', {"id": data["id"]}, to=room_id_str)
 
+# 소켓 박스 업데이트
 @socketio.on('update_box')
 def update_box(data):
     room_id = session.get("room_id")
@@ -149,6 +156,7 @@ def update_box(data):
         db.session.commit()
         emit('update_box', data, to=room_id_str)
 
+#소켓 박스 움직일 때 emit
 @socketio.on('move_box')
 def move_box(data):
     room_id = session.get("room_id")
@@ -162,6 +170,8 @@ def move_box(data):
         box.left = data["left"]
         db.session.commit()
         emit('move_box', data, to=room_id_str)
+
+
 
 if __name__ == '__main__':
     with app.app_context():
