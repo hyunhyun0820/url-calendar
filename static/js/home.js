@@ -69,9 +69,11 @@ function addBox(data) {
 
             box.style.cursor = "grabbing";
 
+            // 터치 드래그 중 스크롤 방지
             if (e.type === "touchstart") {
+                // `touch-action: none` should be added to prevent scroll
                 e.preventDefault();
-                document.body.style.touchAction = "none";
+                container.style.touchAction = "none";  // Prevent scrolling during drag
             }
         }
     };
@@ -79,8 +81,6 @@ function addBox(data) {
     // 드래그 중
     const dragBox = (e) => {
         if (!isDragging) return;
-
-        e.preventDefault(); // ✅ 스크롤 방지
 
         const clientX = e.clientX ?? e.touches?.[0]?.clientX;
         const clientY = e.clientY ?? e.touches?.[0]?.clientY;
@@ -93,6 +93,10 @@ function addBox(data) {
 
         box.style.left = `${newX}px`;
         box.style.top = `${newY}px`;
+
+        if (e.type === "touchmove") {
+            e.preventDefault(); // Prevent scroll during drag
+        }
     };
 
     // 드래그 종료
@@ -100,7 +104,7 @@ function addBox(data) {
         if (isDragging) {
             isDragging = false;
             box.style.cursor = "grab";
-            document.body.style.touchAction = "auto";
+            container.style.touchAction = "auto";  // Allow scrolling after drag
 
             socket.emit("move_box", {
                 id: data.id,
@@ -129,7 +133,7 @@ function addBox(data) {
         }, 500);
     });
 
-    // ✅ 이벤트 등록
+    // 이벤트 등록
     box.addEventListener("mousedown", startDrag);
     document.addEventListener("mousemove", dragBox);
     document.addEventListener("mouseup", stopDrag);
