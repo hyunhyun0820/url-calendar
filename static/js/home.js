@@ -138,7 +138,7 @@ function addBox(data) {
     document.addEventListener("mousemove", dragBox);
     document.addEventListener("mouseup", stopDrag);
 
-    // ✅ 터치 이벤트: box에만 적용
+    // 터치 이벤트: box에만 적용
     box.addEventListener("touchstart", startDrag, { passive: false });
     box.addEventListener("touchmove", dragBox, { passive: false });
     box.addEventListener("touchend", stopDrag);
