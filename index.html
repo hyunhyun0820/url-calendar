@@ -19,15 +19,14 @@
     h1 {
       margin: 10px 0;
       text-align: center;
-      font-size: 2rem;
     }
 
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 1%;
-      width: 98%;
-      max-width: 1200px;
+      gap: 6px;
+      width: 100%;       /* 화면 꽉 채우기 */
+      max-width: 1200px; /* 너무 크면 제한 */
       padding: 6px;
     }
 
@@ -38,14 +37,15 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      height: calc((100vw - 6*6%) / 7 * 0.8); /* 화면 비율 기반 높이 */
-      min-height: 80px;
-      font-size: 1rem;
+      width: 150px;      /* 기존보다 1.5배 확대 */
+      height: 120px;     
+      min-width: 150px;
+      min-height: 120px;
     }
 
     .date {
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: 16px;
       margin: 4px;
       color: #333;
       user-select: none;
@@ -56,7 +56,7 @@
       padding: 4px;
       outline: none;
       overflow-y: auto;
-      font-size: 1rem;
+      font-size: 14px;
     }
 
     .day.empty {
@@ -65,7 +65,7 @@
     }
 
     #save {
-      font-size: 1rem;
+      font-size: 14px;
       cursor: pointer;
       border-radius: 6px;
       border: 1px solid #ccc;
@@ -79,29 +79,10 @@
       background-color: #45a049;
     }
 
-    @media (max-width: 800px) {
+    @media (max-width: 600px) {
       .day {
-        height: 12vw;
-        font-size: 0.9rem;
-      }
-      .date {
-        font-size: 1rem;
-      }
-      .note {
-        font-size: 0.9rem;
-      }
-    }
-
-    @media (max-width: 500px) {
-      .day {
-        height: 15vw;
-        font-size: 0.8rem;
-      }
-      .date {
-        font-size: 0.9rem;
-      }
-      .note {
-        font-size: 0.8rem;
+        width: 100px;
+        height: 75px;
       }
     }
   </style>
