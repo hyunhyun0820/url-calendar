@@ -8,6 +8,8 @@
       margin: 0;
       padding: 0;
       font-family: sans-serif;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,14 +19,16 @@
     h1 {
       margin: 10px 0;
       text-align: center;
+      font-size: 2rem;
     }
 
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-      width: 95%;
+      gap: 1%;
+      width: 98%;
       max-width: 1200px;
+      padding: 6px;
     }
 
     .day {
@@ -34,15 +38,14 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      width: 135px;
-      height: 100px;
-      min-width: 135px;
-      min-height: 100px;
+      height: calc((100vw - 6*6%) / 7 * 0.8); /* 화면 비율 기반 높이 */
+      min-height: 80px;
+      font-size: 1rem;
     }
 
     .date {
       font-weight: bold;
-      font-size: 16px;
+      font-size: 1.2rem;
       margin: 4px;
       color: #333;
       user-select: none;
@@ -53,7 +56,7 @@
       padding: 4px;
       outline: none;
       overflow-y: auto;
-      font-size: 14px;
+      font-size: 1rem;
     }
 
     .day.empty {
@@ -62,24 +65,43 @@
     }
 
     #save {
-      font-size: 14px;
+      font-size: 1rem;
       cursor: pointer;
       border-radius: 6px;
       border: 1px solid #ccc;
       background-color: #4CAF50;
       color: white;
       height: 100%;
-      grid-column: span 2; /* 2칸 차지 */
+      grid-column: span 2; /* 마지막 줄에서 2칸 차지 */
     }
 
     #save:hover {
       background-color: #45a049;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 800px) {
       .day {
-        width: 100px;
-        height: 75px;
+        height: 12vw;
+        font-size: 0.9rem;
+      }
+      .date {
+        font-size: 1rem;
+      }
+      .note {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .day {
+        height: 15vw;
+        font-size: 0.8rem;
+      }
+      .date {
+        font-size: 0.9rem;
+      }
+      .note {
+        font-size: 0.8rem;
       }
     }
   </style>
