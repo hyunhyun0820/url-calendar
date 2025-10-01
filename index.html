@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>URL 저장 달력</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      width: 95%;
+      max-width: 1200px;
+    }
+
+    .day {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      width: 135px;
+      height: 100px;
+      min-width: 135px;
+      min-height: 100px;
+    }
+
+    .date {
+      font-weight: bold;
+      font-size: 16px;
+      margin: 4px;
+      color: #333;
+      user-select: none;
+    }
+
+    .note {
+      flex: 1;
+      padding: 4px;
+      outline: none;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .day.empty {
+      background: transparent;
+      border: none;
+    }
+
+    #save {
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #4CAF50;
+      color: white;
+      height: 100%;
+      grid-column: span 2; /* 2칸 차지 */
+    }
+
+    #save:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 600px) {
+      .day {
+        width: 100px;
+        height: 75px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>URL 저장 달력</h1>
+  <div class="calendar" id="calendar">
+    <button id="save">저장 & 링크 생성</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+  <script>
+    const calendar = document.getElementById("calendar");
+
+    // 31일 달력 생성
+    for (let i = 1; i <= 31; i++) {
+      const day = document.createElement("div");
+      day.className = "day";
+
+      const date = document.createElement("div");
+      date.className = "date";
+      date.textContent = i;
+
+      const note = document.createElement("div");
+      note.className = "note";
+      note.contentEditable = "true";
+
+      day.appendChild(date);
+      day.appendChild(note);
+
+      calendar.insertBefore(day, document.getElementById("save"));
+    }
+
+    // 마지막 줄 버튼 오른쪽 끝 2칸 차지
+    const totalCells = calendar.querySelectorAll(".day").length;
+    const remainder = totalCells % 7; // 마지막 줄 채워진 칸 수
+    const emptyCount = remainder > 0 ? 7 - remainder - 2 : 5; // 버튼 2칸 확보
+    for (let i = 0; i < emptyCount; i++) {
+      const empty = document.createElement("div");
+      empty.className = "day empty";
+      calendar.insertBefore(empty, document.getElementById("save"));
+    }
+
+    // 저장 버튼 클릭 → URL 생성 & 클립보드 복사
+    document.getElementById("save").addEventListener("click", () => {
+      const data = [];
+      document.querySelectorAll(".note").forEach(note => {
+        data.push(note.innerText);
+      });
+      const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(data));
+      const url = `${location.origin}${location.pathname}#${compressed}`;
+      navigator.clipboard.writeText(url).then(() => {
+        alert("링크가 복사되었습니다!");
+      });
+    });
+
+    // URL 해시 복원
+    if (location.hash.length > 1) {
+      try {
+        const decoded = LZString.decompressFromEncodedURIComponent(location.hash.slice(1));
+        const data = JSON.parse(decoded);
+        document.querySelectorAll(".note").forEach((note, i) => {
+          if (data[i]) note.innerText = data[i];
+        });
+      } catch (e) {
+        console.error("복원 실패:", e);
+      }
+    }
+  </script>
+</body>
+</html>
